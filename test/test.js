@@ -6,14 +6,14 @@ const redeemedDeposit = "0x0d12d705bb562affd85b5d3a5cf3656169b56288";
 const TBTC_DEPOSIT_TOKEN_ADDRESS = "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0"
 
 describe("DepositRedemptionIncentive", function () {
-  async function initContract(depositAddress) {
+  async function initContract(depositAddress, amount) {
     const DepositRedemptionIncentive = await ethers.getContractFactory("DepositRedemptionIncentive");
     const DepositRedemptionIncentiveFactory = await ethers.getContractFactory("DepositRedemptionIncentiveFactory");
     const implementation = await DepositRedemptionIncentive.deploy();
     depositRedemptionIncentiveFactory = await DepositRedemptionIncentiveFactory.deploy(implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS);
-    const transactionReceipt = await depositRedemptionIncentiveFactory.createIncentive(depositAddress);
+    const transactionReceipt = await depositRedemptionIncentiveFactory.createIncentive(depositAddress, {value: amount});
     const data = await transactionReceipt.wait();
-    const cloneAddress = data.events[0].args.depositCloneAddress;
+    const cloneAddress = data.events[0].args.cloneAddress;
 
     return await DepositRedemptionIncentive.attach(cloneAddress);
   }
@@ -46,6 +46,12 @@ describe("DepositRedemptionIncentive", function () {
     // TDT owner should revceive the incentive
     const redeemerEndingBalance = await ethers.provider.getBalance(redeemerAddress);
     expect(redeemerEndingBalance.sub(redeemerStartingBalance)).to.equal(20);
+  });
+
+  it("Deposit should allow deposit via creation function", async function () {
+    const depositRedemptionIncentive = await initContract(activeDeposit, 10);
+
+    expect(await ethers.provider.getBalance(depositRedemptionIncentive.address)).to.equal(10);
   });
 
   it("Active deposit should allow deposit but block redemption", async function () {

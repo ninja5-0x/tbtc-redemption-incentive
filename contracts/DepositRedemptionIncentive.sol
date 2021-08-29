@@ -25,7 +25,11 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
     uint cancellationBlockTimestamp = MAX_INT;
 
     // Setup a deposit incentive pointing at a specific address. Any amount can be deposited (by anyone).
-    function initializeIncentive(address payable _creator, address payable _tbtcDepositAddress, TBTCDepositToken _tbtcDepositToken) public onlyFactory payable {
+    function initializeIncentive(
+        address payable _creator,
+        address payable _tbtcDepositAddress,
+        TBTCDepositToken _tbtcDepositToken
+    ) public onlyFactory payable {
         creator = _creator;
         deposit = Deposit(_tbtcDepositAddress);
         tbtcDepositToken = TBTCDepositToken(_tbtcDepositToken);
