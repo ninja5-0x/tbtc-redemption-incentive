@@ -1,4 +1,3 @@
-//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.5.17;
 
 import {Deposit} from "@keep-network/tbtc/contracts/deposit/Deposit.sol";
