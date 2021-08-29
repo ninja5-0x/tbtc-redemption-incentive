@@ -3,13 +3,19 @@ const { ethers } = require("hardhat");
 
 const activeDeposit = "0xc1be769592a23e25c8a0a6cf39d57bdd8b3e47f6";
 const redeemedDeposit = "0x0d12d705bb562affd85b5d3a5cf3656169b56288";
+const TBTC_DEPOSIT_TOKEN_ADDRESS = "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0"
 
 describe("DepositRedemptionIncentive", function () {
   async function initContract(depositAddress) {
     const DepositRedemptionIncentive = await ethers.getContractFactory("DepositRedemptionIncentive");
-    const depositRedemptionIncentive = await DepositRedemptionIncentive.deploy(depositAddress, "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0");
-    await depositRedemptionIncentive.deployed();
-    return depositRedemptionIncentive;
+    const DepositRedemptionIncentiveFactory = await ethers.getContractFactory("DepositRedemptionIncentiveFactory");
+    const implementation = await DepositRedemptionIncentive.deploy();
+    depositRedemptionIncentiveFactory = await DepositRedemptionIncentiveFactory.deploy(implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS);
+    const transactionReceipt = await depositRedemptionIncentiveFactory.createIncentive(depositAddress);
+    const data = await transactionReceipt.wait();
+    const cloneAddress = data.events[0].args.depositCloneAddress;
+
+    return await DepositRedemptionIncentive.attach(cloneAddress);
   }
 
   it("Redeemed deposit should allow multiple deposits and a redemption", async function () {

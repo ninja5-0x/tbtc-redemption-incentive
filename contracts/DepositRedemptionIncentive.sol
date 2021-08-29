@@ -4,6 +4,9 @@ pragma solidity ^0.5.17;
 import {Deposit} from "@keep-network/tbtc/contracts/deposit/Deposit.sol";
 import {DepositStates} from "@keep-network/tbtc/contracts/deposit/DepositStates.sol";
 import {TBTCDepositToken} from "@keep-network/tbtc/contracts/system/TBTCSystem.sol";
+import {Initializable} from '@openzeppelin/upgrades/contracts/Initializable.sol';
+
+import "./DepositRedemptionIncentiveFactoryAuthority.sol";
 
 // A deposit redemption incentive is a bonus that is available to the owner of
 // the tdt (the redeemer) once the tdt enters either the REDEEMED or LIQUIDATED
@@ -12,7 +15,7 @@ import {TBTCDepositToken} from "@keep-network/tbtc/contracts/system/TBTCSystem.s
 // these 7 days, the incentive owner can receive the incentive they provided
 // back. This ensures any in process redemptions still receive their promised
 // bonuses.
-contract DepositRedemptionIncentive {
+contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthority {
 
     address payable creator;
     Deposit deposit;
@@ -23,13 +26,10 @@ contract DepositRedemptionIncentive {
     uint cancellationBlockTimestamp = MAX_INT;
 
     // Setup a deposit incentive pointing at a specific address. Any amount can be deposited (by anyone).
-    constructor(
-        address payable _tbtcDepositAddress,
-        TBTCDepositToken _tbtcDepositToken
-    ) public {
+    function initializeIncentive(address payable _creator, address payable _tbtcDepositAddress, TBTCDepositToken _tbtcDepositToken) public onlyFactory payable {
+        creator = _creator;
         deposit = Deposit(_tbtcDepositAddress);
         tbtcDepositToken = TBTCDepositToken(_tbtcDepositToken);
-        creator = msg.sender;
     }
 
     function isInEndState() private view returns (bool) {

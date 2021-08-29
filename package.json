@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@keep-network/tbtc": ">1.1.2-pre <1.1.2-rc"
+    "@keep-network/tbtc": ">1.1.2-pre <1.1.2-rc",
+    "@openzeppelin/upgrades": "^2.8.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
