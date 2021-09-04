@@ -3,7 +3,8 @@ const { ethers } = require("hardhat");
 
 const activeDeposit = "0xc1be769592a23e25c8a0a6cf39d57bdd8b3e47f6";
 const redeemedDeposit = "0x0d12d705bb562affd85b5d3a5cf3656169b56288";
-const TBTC_DEPOSIT_TOKEN_ADDRESS = "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0"
+const nonDepositAddress = "0x868464f81e7b1be0e6ac5718174f0ffe378f9903";
+const TBTC_DEPOSIT_TOKEN_ADDRESS = "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0";
 
 describe("DepositRedemptionIncentive", function () {
   async function initContract(depositAddress, amount) {
@@ -129,5 +130,13 @@ describe("DepositRedemptionIncentive", function () {
     await network.provider.send("evm_setNextBlockTimestamp", [timestampBefore + 60 * 60 * 24 * 7 + 1]);
     await network.provider.send("evm_mine");
     await expect(depositRedemptionIncentive.finalizeCancel()).to.be.revertedWith("");
+  });
+
+  it("Require non-deposit address initializations to fail", async function () {
+    const DepositRedemptionIncentive = await ethers.getContractFactory("DepositRedemptionIncentive");
+    const DepositRedemptionIncentiveFactory = await ethers.getContractFactory("DepositRedemptionIncentiveFactory");
+    const implementation = await DepositRedemptionIncentive.deploy();
+    depositRedemptionIncentiveFactory = await DepositRedemptionIncentiveFactory.deploy(implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS);
+    await expect(depositRedemptionIncentiveFactory.createIncentive(nonDepositAddress, {value: 0})).to.be.revertedWith("");
   });
 });

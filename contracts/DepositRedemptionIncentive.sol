@@ -32,6 +32,8 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
     ) public onlyFactory payable {
         creator = _creator;
         deposit = Deposit(_tbtcDepositAddress);
+        // Ensure the deposit at least has a currentState parameter (sanity check)
+        deposit.currentState();
         tbtcDepositToken = TBTCDepositToken(_tbtcDepositToken);
         cancellationBlockTimestamp = MAX_INT;
     }
