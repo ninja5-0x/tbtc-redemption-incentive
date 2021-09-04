@@ -13,6 +13,20 @@ async function main() {
 
   console.log("Implementation address:", implementation.address);
   console.log("Factory address:", factory.address);
+
+  // Verify contracts
+  console.log("Verifying contracts on etherscan, please wait a moment");
+  await new Promise(resolve => setTimeout(resolve, 30000));
+
+  await hre.run("verify:verify", {
+    address: implementation.address,
+    constructorArguments: [],
+  });
+
+  await hre.run("verify:verify", {
+    address: factory.address,
+    constructorArguments: [implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS],
+  });
 }
 
 main()
