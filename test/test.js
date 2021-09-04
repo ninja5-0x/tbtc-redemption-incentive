@@ -1,9 +1,9 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const activeDeposit = "0xc1be769592a23e25c8a0a6cf39d57bdd8b3e47f6";
-const redeemedDeposit = "0x0d12d705bb562affd85b5d3a5cf3656169b56288";
-const nonDepositAddress = "0x868464f81e7b1be0e6ac5718174f0ffe378f9903";
+const ACTIVE_DEPOSIT_ADDRESS = "0xc1be769592a23e25c8a0a6cf39d57bdd8b3e47f6";
+const REDEEMED_DEPOSIT_ADDRESS = "0x0d12d705bb562affd85b5d3a5cf3656169b56288";
+const NON_DEPOSIT_ADDRESS = "0x868464f81e7b1be0e6ac5718174f0ffe378f9903";
 const TBTC_DEPOSIT_TOKEN_ADDRESS = "0x10b66bd1e3b5a936b7f8dbc5976004311037cdf0";
 
 describe("DepositRedemptionIncentive", function () {
@@ -21,9 +21,9 @@ describe("DepositRedemptionIncentive", function () {
 
   it("Redeemed deposit should allow multiple deposits and a redemption", async function () {
     const redeemerAddress = "0xa984ecf1aca8dd45e1358034d577b6d2c7032262";
-    const depositAddress = redeemedDeposit;
+    const depositAddress = REDEEMED_DEPOSIT_ADDRESS;
 
-    const depositRedemptionIncentive = await initContract(redeemedDeposit);
+    const depositRedemptionIncentive = await initContract(REDEEMED_DEPOSIT_ADDRESS);
     const redeemerStartingBalance = await ethers.provider.getBalance(redeemerAddress);
 
     const depositTx = await depositRedemptionIncentive.addIncentive({value: 10});
@@ -50,13 +50,13 @@ describe("DepositRedemptionIncentive", function () {
   });
 
   it("Deposit should allow deposit via creation function", async function () {
-    const depositRedemptionIncentive = await initContract(activeDeposit, 10);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS, 10);
 
     expect(await ethers.provider.getBalance(depositRedemptionIncentive.address)).to.equal(10);
   });
 
   it("Active deposit should allow deposit but block redemption", async function () {
-    const depositRedemptionIncentive = await initContract(activeDeposit);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS);
 
     const depositTx = await depositRedemptionIncentive.addIncentive({value: 10});
     await depositTx.wait();
@@ -69,28 +69,28 @@ describe("DepositRedemptionIncentive", function () {
 
   it("Deposit is not cancellable by non-creator", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(activeDeposit);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS);
 
     await expect(depositRedemptionIncentive.connect(addr1).initCancel()).to.be.revertedWith("");
   });
 
   it("Active deposit is not cancellable by creator before initializing cancellation", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(activeDeposit);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS);
 
     await expect(depositRedemptionIncentive.connect(creator).finalizeCancel()).to.be.revertedWith("");
   });
 
   it("End state deposit is not cancellable by creator before initializing cancellation", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(redeemedDeposit);
+    const depositRedemptionIncentive = await initContract(REDEEMED_DEPOSIT_ADDRESS);
 
     await expect(depositRedemptionIncentive.connect(creator).finalizeCancel()).to.be.revertedWith("");
   });
 
   it("Active deposit is not cancellable by creator before cooldown period", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(activeDeposit);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS);
 
     const cancelTx = await depositRedemptionIncentive.initCancel();
     await cancelTx.wait();
@@ -101,7 +101,7 @@ describe("DepositRedemptionIncentive", function () {
 
   it("Active deposit is cancellable by creator after cooldown period", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(activeDeposit);
+    const depositRedemptionIncentive = await initContract(ACTIVE_DEPOSIT_ADDRESS);
 
     const cancelTx = await depositRedemptionIncentive.initCancel();
     await cancelTx.wait();
@@ -118,7 +118,7 @@ describe("DepositRedemptionIncentive", function () {
 
   it("Redeemed deposit is not cancellable by creator", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
-    const depositRedemptionIncentive = await initContract(redeemedDeposit);
+    const depositRedemptionIncentive = await initContract(REDEEMED_DEPOSIT_ADDRESS);
 
     const cancelTx = await depositRedemptionIncentive.initCancel();
     await cancelTx.wait();
@@ -137,6 +137,6 @@ describe("DepositRedemptionIncentive", function () {
     const DepositRedemptionIncentiveFactory = await ethers.getContractFactory("DepositRedemptionIncentiveFactory");
     const implementation = await DepositRedemptionIncentive.deploy();
     depositRedemptionIncentiveFactory = await DepositRedemptionIncentiveFactory.deploy(implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS);
-    await expect(depositRedemptionIncentiveFactory.createIncentive(nonDepositAddress, {value: 0})).to.be.revertedWith("");
+    await expect(depositRedemptionIncentiveFactory.createIncentive(NON_DEPOSIT_ADDRESS, {value: 0})).to.be.revertedWith("");
   });
 });
