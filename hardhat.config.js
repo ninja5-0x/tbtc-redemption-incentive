@@ -33,7 +33,11 @@ module.exports = {
         url: "https://eth-mainnet.alchemyapi.io/v2/" + process.env.ALCHEMY_API_KEY,
         blockNumber: 13114511
       }
-    }
+    },
+    ropsten: {
+      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts: [`0x${process.env.ROPSTEN_PRIVATE_KEY}`],
+    },
   },
   gasReporter: {
     enabled: true,

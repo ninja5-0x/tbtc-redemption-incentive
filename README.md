@@ -25,3 +25,9 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+## Deploying
+
+```
+npx hardhat run scripts/deploy.js --network=ropsten
+```
