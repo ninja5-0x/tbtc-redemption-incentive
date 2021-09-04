@@ -24,6 +24,10 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
     TBTCDepositToken tbtcDepositToken;
     uint256 cancellationBlockTimestamp;
 
+    event IncentiveCancellationInitialized();
+    event IncentiveCancellationFinalized();
+    event IncentiveRedeemed();
+
     // Setup a deposit incentive pointing at a specific address. Any amount can be deposited (by anyone).
     function initializeIncentive(
         address payable _creator,
@@ -48,6 +52,7 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
         require(isInEndState());
 
         address payable tdtOwner = address(uint160(tbtcDepositToken.ownerOf(uint256(address(deposit)))));
+        emit IncentiveRedeemed();
         selfdestruct(tdtOwner);
     }
 
@@ -58,11 +63,13 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
 
     function initCancel() public onlyCreator {
         cancellationBlockTimestamp = block.timestamp + CANCELLATION_COOL_DOWN_SECONDS;
+        emit IncentiveCancellationInitialized();
     }
 
     function finalizeCancel() public {
         require(!isInEndState());
         require(block.timestamp > cancellationBlockTimestamp);
+        emit IncentiveCancellationFinalized();
 
         selfdestruct(creator);
     }
