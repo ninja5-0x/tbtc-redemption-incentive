@@ -9,7 +9,7 @@ contract DepositRedemptionIncentiveFactory is CloneFactory {
   address public implementationContract;
   TBTCDepositToken public tbtcDepositToken;
 
-  event IncentiveCreated(address cloneAddress);
+  event IncentiveCreated(address incentiveAddress, address depositAddress);
 
   constructor (address _implementationContract, TBTCDepositToken _tbtcDepositToken) public {
     implementationContract = _implementationContract;
@@ -18,7 +18,7 @@ contract DepositRedemptionIncentiveFactory is CloneFactory {
 
   function createIncentive(address payable _tbtcDepositAddress) payable public returns (address){
     address cloneAddress = createClone(implementationContract);
-    emit IncentiveCreated(cloneAddress);
+    emit IncentiveCreated(cloneAddress, _tbtcDepositAddress);
 
     DepositRedemptionIncentive incentive = DepositRedemptionIncentive(address(uint160(cloneAddress)));
     incentive.initialize(address(this));

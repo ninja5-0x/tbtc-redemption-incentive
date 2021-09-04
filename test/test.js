@@ -14,9 +14,9 @@ describe("DepositRedemptionIncentive", function () {
     depositRedemptionIncentiveFactory = await DepositRedemptionIncentiveFactory.deploy(implementation.address, TBTC_DEPOSIT_TOKEN_ADDRESS);
     const transactionReceipt = await depositRedemptionIncentiveFactory.createIncentive(depositAddress, {value: amount});
     const data = await transactionReceipt.wait();
-    const cloneAddress = data.events[0].args.cloneAddress;
+    const incentiveAddress = data.events[0].args.incentiveAddress;
 
-    return await DepositRedemptionIncentive.attach(cloneAddress);
+    return await DepositRedemptionIncentive.attach(incentiveAddress);
   }
 
   it("Redeemed deposit should allow multiple deposits and a redemption", async function () {

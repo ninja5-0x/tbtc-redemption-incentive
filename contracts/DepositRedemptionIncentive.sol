@@ -24,7 +24,7 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
     TBTCDepositToken tbtcDepositToken;
     uint256 cancellationBlockTimestamp;
 
-    event IncentiveCancellationInitialized();
+    event IncentiveCancellationInitialized(uint256 finalizationTimestamp);
     event IncentiveCancellationFinalized();
     event IncentiveRedeemed();
 
@@ -63,7 +63,7 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
 
     function initCancel() public onlyCreator {
         cancellationBlockTimestamp = block.timestamp + CANCELLATION_COOL_DOWN_SECONDS;
-        emit IncentiveCancellationInitialized();
+        emit IncentiveCancellationInitialized(cancellationBlockTimestamp);
     }
 
     function finalizeCancel() public {
