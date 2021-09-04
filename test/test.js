@@ -73,6 +73,20 @@ describe("DepositRedemptionIncentive", function () {
     await expect(depositRedemptionIncentive.connect(addr1).initCancel()).to.be.revertedWith("");
   });
 
+  it("Active deposit is not cancellable by creator before initializing cancellation", async function () {
+    const [creator, addr1, addr2] = await ethers.getSigners();
+    const depositRedemptionIncentive = await initContract(activeDeposit);
+
+    await expect(depositRedemptionIncentive.connect(creator).finalizeCancel()).to.be.revertedWith("");
+  });
+
+  it("End state deposit is not cancellable by creator before initializing cancellation", async function () {
+    const [creator, addr1, addr2] = await ethers.getSigners();
+    const depositRedemptionIncentive = await initContract(redeemedDeposit);
+
+    await expect(depositRedemptionIncentive.connect(creator).finalizeCancel()).to.be.revertedWith("");
+  });
+
   it("Active deposit is not cancellable by creator before cooldown period", async function () {
     const [creator, addr1, addr2] = await ethers.getSigners();
     const depositRedemptionIncentive = await initContract(activeDeposit);

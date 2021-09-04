@@ -16,13 +16,13 @@ import "./DepositRedemptionIncentiveFactoryAuthority.sol";
 // bonuses.
 contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthority {
 
+    uint256 constant CANCELLATION_COOL_DOWN_SECONDS = 60 * 60 * 24 * 7;
+    uint256 constant MAX_INT = 2 ** 256 - 1;
+
     address payable creator;
     Deposit deposit;
     TBTCDepositToken tbtcDepositToken;
-
-    uint constant CANCELLATION_COOL_DOWN_SECONDS = 60 * 60 * 24 * 7;
-    uint constant MAX_INT = uint256(-1);
-    uint cancellationBlockTimestamp = MAX_INT;
+    uint256 cancellationBlockTimestamp;
 
     // Setup a deposit incentive pointing at a specific address. Any amount can be deposited (by anyone).
     function initializeIncentive(
@@ -33,6 +33,7 @@ contract DepositRedemptionIncentive is DepositRedemptionIncentiveFactoryAuthorit
         creator = _creator;
         deposit = Deposit(_tbtcDepositAddress);
         tbtcDepositToken = TBTCDepositToken(_tbtcDepositToken);
+        cancellationBlockTimestamp = MAX_INT;
     }
 
     function isInEndState() private view returns (bool) {
