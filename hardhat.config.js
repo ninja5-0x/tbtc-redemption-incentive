@@ -39,6 +39,9 @@ module.exports = {
       accounts: [`0x${process.env.ROPSTEN_PRIVATE_KEY}`],
     },
   },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
+  },
   gasReporter: {
     enabled: true,
     currency: 'USD',
