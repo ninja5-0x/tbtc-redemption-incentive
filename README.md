@@ -1,8 +1,8 @@
 # TBTC Redemption Incentive
 
-A smart contract for providing incentives for redeeming specific tbtc deposits
-with the goal of allowing KEEP ECDSA node operators to incentivize the
-redemption of deposits they have created, and free up ETH for unstaking.
+A smart contract that allows redemption incentives to be attached to tbtc
+deposits. KEEP ECDSA node operators can use this to free up ETH collateral for
+their node during the unstaking process.
 
 Each redemption incentive is claimable by the owner of the underlying TDT
 (typically the redeemer) once the deposit is in a finalized state (REDEEMED or
@@ -13,7 +13,8 @@ This ensures any in process redemptions still receive their promised bonuses.
 
 ## Setup
 
-Make sure the `ALCHEMY_API_KEY` environment variable is set to an api key.
+Set the appropriate environment variables (`ALCHEMY_API_KEY`,
+`ETHERSCAN_API_KEY`, `ROPSTEN_PRIVATE_KEY`), and install dependencies.
 
 ```
 npm install
@@ -28,8 +29,6 @@ npx hardhat test
 ```
 
 ### Deploying
-
-Set the appropriate environment variables (`ALCHEMY_API_KEY`, `ETHERSCAN_API_KEY`, `ROPSTEN_PRIVATE_KEY`).
 
 ```
 npx hardhat run --network ropsten scripts/deploy.js 
